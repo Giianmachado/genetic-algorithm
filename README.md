@@ -1,2 +1,2 @@
-# genetic-algorithm
+# Genetic Algorithm
 Evolutionary Computing discipline codes.
