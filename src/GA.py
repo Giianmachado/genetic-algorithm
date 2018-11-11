@@ -37,7 +37,7 @@ def selectionByTournament(chromosomes, fitness):
     for _ in range(0, length):
 
         # compare
-        compare = [0, 0, 0, 0, 0]
+        compare = np.zeros(length)
 
         # loop
         for position in random.sample(range(0, length), 3):
