@@ -26,7 +26,7 @@ def populate(population_size, chromossome_size, gene_size):
 #############################################################################################################
 # Select by Tournament
 #############################################################################################################
-def selectionByTournament(chromosomes, fitness):
+def selectionByTournament(chromosomes, fitness, maximize):
 
     # get length
     length = len(chromosomes)
@@ -38,14 +38,25 @@ def selectionByTournament(chromosomes, fitness):
     for _ in range(0, length):
 
         # compare
-        value = np.zeros(length)
+        if maximize == True:
+            value = np.zeros(length)
+        else:
+            value = np.ones(length)
+
         compare = []
         compare.append(value)
 
         # loop
-        for position in random.sample(range(0, length), 3):
-            if fitness(chromosomes[position]) > fitness(compare):
-                compare = chromosomes[position]
+
+        # maximize
+        if maximize == True:
+            for position in random.sample(range(0, length), 3):
+                if fitness(chromosomes[position]) > fitness(compare):
+                    compare = chromosomes[position]
+        else:
+            for position in random.sample(range(0, length), 3):
+                if fitness(chromosomes[position]) < fitness(compare):
+                    compare = chromosomes[position]
 
         # append selected
         result.append(compare)

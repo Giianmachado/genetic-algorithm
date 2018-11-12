@@ -45,7 +45,7 @@ if __name__ == "__main__":
         print('')
 
         # selection by roullete
-        chromosomes = GA.selectionByTournament(chromosomes, fitness)
+        chromosomes = GA.selectionByTournament(chromosomes, fitness, True)
 
         # apply crossover
         chromosomes = GA.crossover(chromosomes, gene_size)

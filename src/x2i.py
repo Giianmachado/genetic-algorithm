@@ -3,18 +3,15 @@
 #############################################################################################################
 import GA
 import numpy as np
-import math
 
 
 #############################################################################################################
 # Constants
 #############################################################################################################
-min_value = -1
-max_value = 2
-population_size = 6
-cromossome_size = 1
-gene_size = 22
-generations = 100
+population_size = 10
+cromossome_size = 2
+gene_size = 5
+generations = 1000
 
 
 #############################################################################################################
@@ -24,9 +21,7 @@ def fitness(x):
     total = 0
     for i in range(len(x)):
         value = np.array(x[i]).dot(2**np.arange(np.array(x[i]).size)[::-1])
-        result = min_value + ((max_value - min_value) * (value / ((2**gene_size) - 1)))
-        total = result * math.sin( 10 * result * math.pi) + 1    
-    
+        total = total + (value * value)
     return total
 
 
@@ -42,15 +37,17 @@ if __name__ == "__main__":
     for epoch in range(0, generations):
 
         # log epoch
-        print("Epoch: " + str(epoch))
+        if epoch % 50 == 0:
+            print("Epoch: " + str(epoch))
 
         # print population
-        for chromosome in chromosomes:
-            print(fitness(chromosome), end=" ")
-        print('')
+        if epoch % 50 == 0:
+            for chromosome in chromosomes:
+                print(fitness(chromosome), end=" ")
+            print('')
 
         # selection by roullete
-        chromosomes = GA.selectionByTournament(chromosomes, fitness, True)
+        chromosomes = GA.selectionByTournament(chromosomes, fitness, False)
 
         # apply crossover
         chromosomes = GA.crossover(chromosomes, gene_size)
@@ -59,6 +56,7 @@ if __name__ == "__main__":
         chromosomes = GA.mutation(chromosomes)
 
         # print population
-        for chromosome in chromosomes:
-            print(fitness(chromosome), end=" ")
-        print('')
+        if epoch % 50 == 0:
+            for chromosome in chromosomes:
+                print(fitness(chromosome), end=" ")
+            print('')
