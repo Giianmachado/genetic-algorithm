@@ -139,6 +139,10 @@ def crossValues(gene1, gene2, gene_size):
     concatenated_gene1 = np.array(concatenated_gene1)
     concatenated_gene2 = np.array(concatenated_gene2)
 
+    # calc best divisor
+    if len(concatenated_gene2) % length != 0:
+        return gene1
+
     # return
     return np.split(concatenated_gene2, length)
 
