@@ -4,16 +4,17 @@
 #############################################################################################################
 import numpy as np
 import random
+import itertools
 
 
 #############################################################################################################
 # Random population
 #############################################################################################################
-def populate(population_size, chromossome_size):
+def populate(population_size, chromossome_size, gene_size):
 
     # Defining the population size.
     # The population will have population_size chromosome where each chromosome has chromossome_size genes.
-    pop_size = (population_size, chromossome_size)
+    pop_size = (population_size, chromossome_size, gene_size)
 
     # Creating the initial population.
     new_population = np.random.randint(2, size=pop_size)
@@ -37,7 +38,9 @@ def selectionByTournament(chromosomes, fitness):
     for _ in range(0, length):
 
         # compare
-        compare = np.zeros(length)
+        value = np.zeros(length)
+        compare = []
+        compare.append(value)
 
         # loop
         for position in random.sample(range(0, length), 3):
@@ -54,7 +57,7 @@ def selectionByTournament(chromosomes, fitness):
 #############################################################################################################
 # Crossover
 #############################################################################################################
-def crossover(chromosomes):
+def crossover(chromosomes, gene_size):
     # get len
     length = len(chromosomes)
 
@@ -66,7 +69,6 @@ def crossover(chromosomes):
 
         # get two random positions
         positions = random.sample(range(0, length), 2)
-        # print(positions)
 
         # get probability
         prob = random.randint(1, 101)
@@ -75,10 +77,8 @@ def crossover(chromosomes):
         if prob < 90:
 
             # set cross values
-            chromosomes[positions[0]] = crossValues(
-                chromosomes[positions[0]], chromosomes[positions[1]])
-            chromosomes[positions[1]] = crossValues(
-                chromosomes[positions[1]], chromosomes[positions[0]])
+            chromosomes[positions[0]] = crossValues(chromosomes[positions[0]], chromosomes[positions[1]], gene_size)
+            chromosomes[positions[1]] = crossValues(chromosomes[positions[1]], chromosomes[positions[0]], gene_size)
 
         # pop and append selected
         result.append(chromosomes[positions[0]])
@@ -98,17 +98,38 @@ def crossover(chromosomes):
 #############################################################################################################
 # Crossover
 #############################################################################################################
-def crossValues(gene1, gene2):
+def crossValues(gene1, gene2, gene_size):
 
     # get len
     length = len(gene1)
 
-    # cut point
-    cut_first = random.randint(1, length - 1)
-    cut_last = cut_first - length
+    # define number of cuts
+    cuts_points_length = (length * 1) + 1
+
+    # get cut point
+    cuts_points = random.sample(range(1, length * gene_size - 1), cuts_points_length)
+    cuts_points.append(0)
+    cuts_points.append(length * gene_size)
+    cuts_points.sort()
+
+    # concat values
+    concatenated_gene1 = list(itertools.chain.from_iterable(gene1))
+    concatenated_gene2 = list(itertools.chain.from_iterable(gene2))
+
+    # loop
+    for i in range(len(cuts_points) - 1):
+        
+        # cut gene 1
+        if i % 2 == 0:
+            aux = concatenated_gene1[cuts_points[i]:cuts_points[i + 1]]
+            concatenated_gene2[cuts_points[i]:cuts_points[i + 1]] = aux
+
+    # concat values
+    concatenated_gene1 = np.array(concatenated_gene1)
+    concatenated_gene2 = np.array(concatenated_gene2)
 
     # return
-    return np.concatenate((gene1[:cut_first], gene2[cut_last:]), axis=None)
+    return np.split(concatenated_gene2, length)
 
 
 #############################################################################################################
@@ -118,16 +139,17 @@ def mutation(chromosomes):
 
     for a in range(len(chromosomes)):
         for b in range(len(chromosomes[a])):
+            for c in range(len(chromosomes[a][b])):
 
-            # get probability
-            prob = random.randint(1, 101)
+                # get probability
+                prob = random.randint(1, 101)
 
-            # if prob is == 1 realize mutation
-            if prob < 5:
-                if chromosomes[a][b] == 0:
-                    chromosomes[a][b] = 1
-                else:
-                    chromosomes[a][b] = 0
+                # if prob is == 1 realize mutation
+                if prob < 5:
+                    if chromosomes[a][b][c] == 0:
+                        chromosomes[a][b][c] = 1
+                    else:
+                        chromosomes[a][b][c] = 0
 
     # return
     return chromosomes

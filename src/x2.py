@@ -9,7 +9,8 @@ import numpy as np
 # Constants
 #############################################################################################################
 population_size = 6
-cromossome_size = 5
+cromossome_size = 1
+gene_size = 5
 generations = 10
 
 
@@ -17,8 +18,11 @@ generations = 10
 # Fitness function - x^2
 #############################################################################################################
 def fitness(x):
-    value = np.array(x).dot(2**np.arange(np.array(x).size)[::-1])
-    return value * value
+    total = 0
+    for i in range(len(x)):
+        value = np.array(x[i]).dot(2**np.arange(np.array(x[i]).size)[::-1])
+        total = total + (value * value)
+    return total
 
 
 #############################################################################################################
@@ -27,7 +31,7 @@ def fitness(x):
 if __name__ == "__main__":
 
     # initial population
-    chromosomes = GA.populate(population_size, cromossome_size)
+    chromosomes = GA.populate(population_size, cromossome_size, gene_size)
 
     # loop
     for epoch in range(0, generations):
@@ -44,7 +48,7 @@ if __name__ == "__main__":
         chromosomes = GA.selectionByTournament(chromosomes, fitness)
 
         # apply crossover
-        chromosomes = GA.crossover(chromosomes)
+        chromosomes = GA.crossover(chromosomes, gene_size)
 
         # apply mutation
         chromosomes = GA.mutation(chromosomes)
